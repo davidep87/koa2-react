@@ -1,4 +1,3 @@
-### Author: Davide Polano @ MVPBLD
 ### Info: General project information
 ### Stack: Node.JS (7.7.1) - KoaJS (2) - Sequelize (Postgres) - Redis - React - Redux - NGINX
 
