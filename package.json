@@ -8,7 +8,6 @@
     "prod": "sudo pm2 start ./config/app.json --only koa2-react-production --env production",
     "logs": "sudo pm2 logs",
     "webpack": "webpack --watch --progress",
-    "webpack:min": "webpack --watch --progress",
     "start:hot": "webpack-dev-server",
     "build": "webpack -p",
     "doc": "jsdoc -c ./config/jsdoc.json"

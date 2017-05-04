@@ -5,7 +5,7 @@ const HtmlPlugin = require('html-webpack-plugin');
 const path = require('path');
 const webpack = require('webpack');
 
-const bundles = ['frontend', 'dashboard'];
+const bundles = ['dashboard']; // add 'frontend' if needed
 const htmlBundles = bundles.map(value => new HtmlPlugin({
     chunks: [`${value}/app`, 'manifest', 'vendor'],
     title: `MDSLab`,
@@ -17,7 +17,7 @@ const htmlBundles = bundles.map(value => new HtmlPlugin({
 const webpackConfig = {
 	entry: {
 		'dashboard/app': ['./client/dashboard/app.js'],
-		'frontend/app': ['./client/frontend/app.js'],
+		// 'frontend/app': ['./client/frontend/app.js'],
     'vendor': [ 'babel-polyfill', 'lodash' ],
 	},
 	output: {
