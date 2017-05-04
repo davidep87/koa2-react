@@ -34,7 +34,7 @@
 - [x] HTTP / HTTP2 / SSL Support
 - [x] Sequelize ORM
 - [x] Redis Session Handler
-- [x] Redis API Cache system
+- [] Redis API Cache system
 - [x] Auth Middleware
 
 ### frontend
