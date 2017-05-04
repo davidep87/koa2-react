@@ -1,0 +1,48 @@
+{
+	"apps": [{
+		"name": "koa2-react-development",
+		"script": "index.js",
+		"exec_mode": "cluster",
+		"node_args": "--max_old_space_size=512",
+		"max_memory_restart": "1024M",
+		"error_file": "logs/error.log",
+		"out_file": "logs/out.log",
+		"max_restarts": 3,
+		"watch": true,
+		"ignore_watch": ["node_modules", "logs", "\.git", "memorydb/inmemory.db", "public"],
+	  "watch_options": {
+	    "followSymlinks": true
+	  },
+		"env": { "NODE_ENV": "development" },
+	},{
+		"name": "koa2-react-staging",
+		"script": "index.js",
+		"exec_mode": "cluster",
+		"node_args": "--max_old_space_size=256",
+		"max_memory_restart": "512M",
+		"error_file": "logs/error.log",
+		"out_file": "logs/out.log",
+		"max_restarts": 3,
+		"watch": true,
+		"ignore_watch": ["node_modules", "logs", "\.git", "memorydb/inmemory.db", "public"],
+	  "watch_options": {
+	    "followSymlinks": true
+	  },
+		"env": { "NODE_ENV": "staging" },
+	},{
+		"name": "koa2-react-production",
+		"script": "index.js",
+		"exec_mode": "cluster",
+		"node_args": "--max_old_space_size=1024",
+		"max_memory_restart": "4096M",
+		"error_file": "logs/error.log",
+		"out_file": "logs/out.log",
+		"max_restarts": 3,
+		"watch": true,
+		"ignore_watch": ["node_modules", "logs", "\.git", "memorydb/inmemory.db", "public"],
+	  "watch_options": {
+	    "followSymlinks": true
+	  },
+		"env": { "NODE_ENV": "production" }
+	}]
+}
