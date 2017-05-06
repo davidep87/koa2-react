@@ -18,7 +18,6 @@
         - logs ( see logs )
         - start:hot ( start webpack webserver hot)
         - webpack:color ( watch progress color )
-        - webpack:min ( minified version )
         - build ( classic build )
         - doc ( generate documentation )
 

@@ -14,6 +14,9 @@ import Users from './components/Users/index';
 import Settings from './components/Settings/index';
 import Preloader from './components/Preloader';
 
+import 'semantic-ui-css/semantic.min.css';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
+
 export default class App extends React.Component {
 
   constructor(){

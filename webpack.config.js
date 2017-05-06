@@ -17,22 +17,13 @@ const htmlBundles = bundles.map(value => new HtmlPlugin({
 const webpackConfig = {
 	entry: {
 		'dashboard/app': ['./client/dashboard/app.js'],
-		// 'frontend/app': ['./client/frontend/app.js'],
+    // 'frontend/app': ['./client/frontend/app.js'],
     'vendor': [ 'babel-polyfill', 'lodash' ],
 	},
 	output: {
 		filename: './build/[name].min.js',
 		publicPath: '/',
 	},
-	plugins: [
-        ...htmlBundles,
-		new ExtractTextPlugin({ filename: './build/[name].min.css', ignoreOrder: true }),
-		new webpack.optimize.OccurrenceOrderPlugin(),
-		new webpack.NamedModulesPlugin(),
-		new webpack.NoEmitOnErrorsPlugin(),
-		new CleanPlugin(['build']),
-		new webpack.optimize.CommonsChunkPlugin({ names: ['vendor', 'manifest'] }),
-	],
 	module: {
 		rules: [{
 			test: [/\.js$/i],
@@ -72,14 +63,8 @@ const webpackConfig = {
 				},
 			}],
 		},{
-      test: /\.css$/i,
-      include: path.join(__dirname, 'client'),
-      loader: 'style-loader!css-loader',
-      exclude: /flexboxgrid/
-    },{
       test: /\.css$/,
-      loader: 'style-loader!css-loader?modules',
-      include: path.join(__dirname, 'node_modules'),
+      loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader' })
     },{
 			test: [/\.woff$/i, /\.woff2$/i],
 			use: [{
@@ -87,15 +72,17 @@ const webpackConfig = {
 				options: {
 					limit: 15000,
 					mimetype: 'application/font-woff',
+          name: 'public/fonts/[hash:base64:12].[ext]'
 				},
 			}],
 		},{
-			test: [/\.ttf$/i, /\.eof$/i],
+			test: [/\.ttf$/i, /\.eof$/i, /\.eot$/i],
 			use: [{
 				loader: 'url-loader',
 				options: {
 					limit: 15000,
 					mimetype: 'application/octet-stream',
+          name: 'public/fonts/[hash:base64:12].[ext]'
 				},
 			}],
 		},{
@@ -104,11 +91,20 @@ const webpackConfig = {
             loader: 'url-loader',
             options: {
                 limit: 15000,
-                name: 'images/[hash:base64:12].[ext]'
+                name: 'public/images/[hash:base64:12].[ext]'
             }
           }]
 		}],
-	}
+	},
+	plugins: [
+        ...htmlBundles,
+		new ExtractTextPlugin({ filename: './build/[name].min.css', ignoreOrder: true }),
+		new webpack.optimize.OccurrenceOrderPlugin(),
+		new webpack.NamedModulesPlugin(),
+		new webpack.NoEmitOnErrorsPlugin(),
+		new CleanPlugin(['build']),
+		new webpack.optimize.CommonsChunkPlugin({ names: ['vendor', 'manifest'] }),
+	]
 };
 
 webpackConfig.devtool = process.env.NODE_ENV === 'development' ? 'eval' : '';
