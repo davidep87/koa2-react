@@ -1,14 +1,7 @@
-const router = require('koa-router')()
-const body = require('koa-body')()
-
 /**
 * @fileOverview Endpoint for Authorization
 * @module Auth
 */
-
-router
-  .post('/login', body, login)
-  .post('/logout', body, logout)
 
 /**
  * Endpoint: /api/login
@@ -17,7 +10,7 @@ router
  * @param  {string} password user password
  * @return {object} data contain isLogged (boolean), token (string), message (string)
  */
-async function login(ctx){
+exports.login = async function login(ctx){
 
   const user = await ctx.db.models.User.findOne({ where: { "username": ctx.request.body.username } }).then((result) => result)
   let isLogged = false
@@ -46,7 +39,7 @@ async function login(ctx){
  * @param  {string} token token released after login
  * @return {object} data contain success (boolean), isLogged (boolean) should be always false
  */
-async function logout(ctx){
+exports.logout = async function logout(ctx){
   await ctx.auth.deleteToken(ctx.request.body.token)
   ctx.body = { "success": true, "isLogged" : false }
 }
@@ -61,5 +54,3 @@ async function comparePassword(user, password){
     })
   })
 }
-
-module.exports = router

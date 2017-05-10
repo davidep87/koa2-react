@@ -2,6 +2,7 @@ const http2 = require('http2')
 const koa = require('koa')
 const body = require('koa-body')
 const api = require('koa-router')()
+const apiRoutes = require('./api/index')
 const config = require('./config/config.js')
 const sessions = require('./helpers/session.js')
 const app = new koa()
@@ -10,13 +11,8 @@ app.context.auth = new sessions({ secret: `${config.secret}`, serverHost: `${con
 app.context.db = require('./config/database')
 app.context.errors = require('./config/errors')
 
-config.apiRoutes.forEach((apiRoute) => {
-  apiRoute = require(`./api/${apiRoute}`)
-  if(typeof apiRoute.routes === "function"){
-    api.use('/api', apiRoute.routes())
-  }
-})
-
+api.use('/api', apiRoutes.routes())
+app.use(api.routes())
 app.use(api.routes())
 app.use(body())
 

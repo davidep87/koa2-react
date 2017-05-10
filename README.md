@@ -44,4 +44,4 @@
   - []  Main dashboard view
   - [x] Settings
 
-### NOTE: This is not a completed boilerplate.
+### NOTE: This is not a completed boilerplate (React is not using PROPTYPES)
