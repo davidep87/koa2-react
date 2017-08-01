@@ -1,9 +1,11 @@
 const _ = require('lodash')
-const CleanPlugin = require('clean-webpack-plugin')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const HtmlPlugin = require('html-webpack-plugin')
 const path = require('path')
 const webpack = require('webpack')
+const HtmlPlugin = require('html-webpack-plugin')
+const CleanPlugin = require('clean-webpack-plugin')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+
 
 const bundles = ['dashboard']; // add 'frontend' if needed
 const htmlBundles = bundles.map(value => new HtmlPlugin({
@@ -123,15 +125,35 @@ const webpackConfig = {
       }
     ]
   },
-  plugins: [
+  plugins: plugins: [
     ...htmlBundles,
-    new ExtractTextPlugin({filename: './build/[name].min.css', ignoreOrder: true}),
-    new webpack.optimize.OccurrenceOrderPlugin(),
+    new ExtractTextPlugin({
+      filename: './build/[name].min.css',
+      ignoreOrder: true
+    }),
     new webpack.NamedModulesPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
     new CleanPlugin(['build']),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': '"production"'
+    }),
+    new webpack.optimize.OccurrenceOrderPlugin(),
     new webpack.optimize.CommonsChunkPlugin({
       names: ['vendor', 'manifest']
+    }),
+    new webpack.optimize.UglifyJsPlugin({
+      compress: {
+        warnings: false
+      },
+      include: /\.min\.js$/
+    }),
+    new OptimizeCssAssetsPlugin({
+      assetNameRegExp: /\.min\.css$/,
+      cssProcessorOptions: {
+        discardComments: {
+          removeAll: true
+        }
+      }
     })
   ]
 };

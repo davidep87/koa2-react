@@ -13,9 +13,7 @@ app.context.errors = require('./config/errors')
 
 api.use('/api', apiRoutes.routes())
 app.use(api.routes())
-app.use(api.routes())
-app.use(body())
 
-config.ssl.active? http2.createServer(config.ssl, app.callback()).listen(config.server.port) : app.listen(config.server.port)
+config.ssl.active ? http2.createServer(config.ssl, app.callback()).listen(config.server.port) : app.listen(config.server.port)
 
 console.log(`Server is now running on ${config.server.hostname} port: ${config.server.port}`)

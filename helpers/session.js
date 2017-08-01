@@ -4,7 +4,7 @@ const client = redis.createClient()
 
 class Session {
   /**
-   * [constructor config]
+   * constructor config
    * @param  {string} secret a secret key used to generate the token
    * @param  {string} serverHost the hostname of the server
    */
@@ -14,20 +14,21 @@ class Session {
   }
 
   /**
-   * [insert session]
+   * insert session
    * @param  {int}  session.user id of the user
    * @param  {string}  session.token generated token
    * @param  {unixtime}  session.exp expiration time of token
-   * @return {Promise}
    */
   async insert(session){
-    await client.hmset(session.user, 'token', session.token, 'exp', session.exp)
+    await client.hmset(session.user, 'token', `${session.token}`, 'exp', `${session.exp}`, 'type', `${session.type}`)
+    await client.expireat(session.user, session.exp, function (err, didSetExpiry) {
+        console.log('set exp => ', didSetExpiry)
+    })
   }
 
   /**
-   * [deleteToken description]
+   * deleteToken description
    * @param  {type}  token [user token]
-   * @return {Promise}
    */
   async deleteToken(token){
     const decoded = await this.decodeToken(token)
@@ -35,7 +36,7 @@ class Session {
   }
 
   /**
-   * [check the token status]
+   * check the token status
    * @param  {string}  token        user token
    * @param  {object}  error        internal error list params
    * @param  {boolean} forcedUpdate if true the token will be automatically refreshed when is expired
@@ -56,16 +57,19 @@ class Session {
 
     } else {
 
-      if(decodedToken.exp < Date.now()){
+      if(new Date(decodedToken.exp).getTime() <  new Date().getTime()){
         if(forcedUpdate){
           const decoded = await this.decodeToken(token)
           await client.del(`${decoded.id}`)
           token = await this.createToken(decodedToken.id)
-          await client.hmset(decodedToken.id, 'token', token, 'exp', new Date().getTime() + (360000 * 24 * 30))
+          const time = new Date()
+          time.setMinutes(time.getMinutes() + 480)
+          await client.hmset(decodedToken.id, 'token', token, 'exp', time)
           updated = true
           message = error.TOKEN_UPDATED
         } else {
-          message = error.TOKEN_NOT_UPDATED
+          isLogged = false
+          message = error.TOKEN_NOT_VALID
         }
       } else {
         message = error.TOKEN_IS_VALID
@@ -76,14 +80,16 @@ class Session {
   }
 
   /**
-   * [createToken]
+   * createToken
    * @param  {type}  id user id or anything that you like to use as identificator
    * @return {string}   token
    */
   async createToken(id) {
+    const time = new Date()
+    time.setMinutes(time.getMinutes() + 480)
     const payload = {
       iss: this.serverIp,
-      exp: new Date().getTime() + (360000 * 24 * 30),
+      exp: time,
       id: id,
     }
     const token = await jws.sign({ header: { alg: 'HS256' }, payload: payload, secret: this.secret })
@@ -91,7 +97,7 @@ class Session {
   }
 
   /**
-   * [decodeToken return the information crypted inside the token
+   * decodeToken return the information crypted inside the token
    * @param  {type}    token description
    * @return {decoded} contain serverHost, expiration date and an identificator
    */
@@ -109,7 +115,7 @@ class Session {
     }
   	return decoded
   }
-  
+
 }
 
 module.exports = Session

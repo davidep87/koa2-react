@@ -2,10 +2,6 @@ import axios from 'axios';
 
 export function doLogin({ username, password }) {
   return async dispatch => {
-    // dispatch({
-    //   type: 'FETCH_SITES_REQUEST'
-    // });
-
     try {
       const response = await axios.post('/api/login', { username, password } );
       const data = response.data;

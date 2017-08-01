@@ -1,6 +1,6 @@
 const router = require('koa-router')()
 const body = require('koa-body')()
-const auth = require('../helpers/middleware.js')
+const auth = require('../helpers/middleware')
 const { login, logout, restorePassword, generatePassword } = require('./auth')
 const { settings, getSettings } = require('./settings')
 

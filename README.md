@@ -1,3 +1,4 @@
+[![Known Vulnerabilities](https://snyk.io/test/github/davidep87/koa2-react/badge.svg)](https://snyk.io/test/github/davidep87/koa2-react)
 ### Info: General project information
 ### Stack: Node.JS (7.7.1) - KoaJS (2) - Sequelize (Postgres) - Redis - React - Redux - NGINX
 
