@@ -1,3 +1,4 @@
+const be = require('bejs')
 const jws = require('jws')
 const redis = require('redis')
 const client = redis.createClient()
@@ -14,14 +15,14 @@ class Session {
   }
 
   /**
-   * insert session
+   * insert admin session
    * @param  {int}  session.user id of the user
    * @param  {string}  session.token generated token
    * @param  {unixtime}  session.exp expiration time of token
    */
   async insert(session){
-    await client.hmset(session.user, 'token', `${session.token}`, 'exp', `${session.exp}`, 'type', `${session.type}`)
-    await client.expireat(session.user, session.exp, function (err, didSetExpiry) {
+    await client.set(`${session.user}`, `${session.token}`, redis.print)
+    await client.expireat(`${session.user}`, session.exp, function (err, didSetExpiry) {
         console.log('set exp => ', didSetExpiry)
     })
   }
@@ -39,44 +40,39 @@ class Session {
    * check the token status
    * @param  {string}  token        user token
    * @param  {object}  error        internal error list params
-   * @param  {boolean} forcedUpdate if true the token will be automatically refreshed when is expired
    * @return {Object}  isLogged: boolean, token: 'string', message: 'string', updated: boolean
    */
-  async check(token, error, forcedUpdate){
+  async check(token, error){
 
-    let isLogged = true
+    let isLogged = false
     let message = null
-    let updated = false
 
-    const decodedToken = await this.decodeToken(token)
+    const decoded = await this.decodeToken(token)
 
-    if(!decodedToken){
+    if(!decoded){
 
-      isLogged = false
       message = error.TOKEN_NOT_VALID
+      return { isLogged, token, message }
 
     } else {
 
-      if(new Date(decodedToken.exp).getTime() <  new Date().getTime()){
-        if(forcedUpdate){
-          const decoded = await this.decodeToken(token)
-          await client.del(`${decoded.id}`)
-          token = await this.createToken(decodedToken.id)
-          const time = new Date()
-          time.setMinutes(time.getMinutes() + 480)
-          await client.hmset(decodedToken.id, 'token', token, 'exp', time)
-          updated = true
-          message = error.TOKEN_UPDATED
-        } else {
-          isLogged = false
-          message = error.TOKEN_NOT_VALID
-        }
+      if(be.past(new Date(decoded.exp))){
+
+        await client.del(`${decoded.id}`)
+        message = error.TOKEN_NOT_VALID
+        return { isLogged, token, message }
+
       } else {
-        message = error.TOKEN_IS_VALID
+
+       const storedToken = await this.retrieveKey(decoded.id)
+
+       if(storedToken === token)
+         isLogged = true
+
+       return { isLogged, token, message }
+
       }
     }
-
-    return { isLogged, token, message, updated }
   }
 
   /**
@@ -114,6 +110,25 @@ class Session {
       }
     }
   	return decoded
+  }
+
+  /**
+   * retrieveKey return the information crypted inside the token
+   * @param  {key}     id that we want search
+   * @return {object}  return value or error
+   */
+  async retrieveKey(key) {
+
+    return new Promise((resolve, reject) => {
+      client.get(`${key}`, function (err, value){
+         if (err){
+           reject(err)
+           return
+         }
+         resolve(value)
+      })
+    })
+
   }
 
 }

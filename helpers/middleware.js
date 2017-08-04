@@ -1,24 +1,21 @@
-const config = require('../config/config.js')
+const config = require('../config/config')
 
-module.exports = function(auth) {
+module.exports = function(auth){
 
-  return async function(ctx, next) {
+  return async function(ctx, next){
 
-    if (auth) {
-      if (!ctx.request.body.token)
-        return {"isLogged": false, "token": false, "message": ctx.errors.LOGIN_ERROR}
+    if(auth){
+      if(!ctx.request.body.token)
+        return ctx.body = { isLogged : false, token: false , message: ctx.errors.LOGIN_ERROR }
 
-      let forcedUpdate = ctx.request.body.forcedUpdate ? true : false
-      let status = await ctx.auth.check(ctx.request.body.token, ctx.errors, forcedUpdate)
+      let status = await ctx.auth.check(ctx.request.body.token, ctx.errors)
 
-      if (!status.isLogged)
-        return ctx.body = status
+      if(!status.isLogged)
+        return ctx.body = { isLogged : false, token: false , message: ctx.errors.TOKEN_NOT_UPDATED }
 
-      if (status.updated)
-        ctx.set('token', `${status.token}`)
     }
 
-    for (let header of Object.entries(config.cors.headers)) {
+    for(let header of Object.entries(config.cors.headers)){
       ctx.set(header[0], header[1])
     }
 
