@@ -7,5 +7,6 @@ module.exports = {
   TOKEN_NOT_VALID: 'Token not valid',
   TOKEN_NOT_UPDATED: 'Token expired do the login again',
   EMAIL_NOT_IN_DB: 'Email not found',
-  EMAIL_PASS_RESTORE_SENDED: 'Restore Email sended successfully'
+  EMAIL_PASS_RESTORE_SENDED: 'Restore Email sended successfully',
+  REQUIRED_PARAMS_EMPTY: 'You are missing some required params'
 }

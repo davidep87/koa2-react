@@ -2,7 +2,7 @@
 * @fileOverview Endpoint for Dashboard Settings managment
 * @module Settings
 */
-
+const be = require('bejs')
 /**
  * Endpoint: /api/settings
  * Method: POST
@@ -12,6 +12,9 @@
  * @return {object} settings all info saved in general settings
  */
 exports.settings = async function settings(ctx, next){
+
+  if(be.empty(ctx.request.body.settings))
+    return ctx.body = ctx.errors.REQUIRED_PARAMS_EMPTY
 
   let settings = await ctx.db.models.Settings
     .findOrCreate({ where: { id: 1 }, defaults: ctx.request.body.settings}).then((setting, created) => {

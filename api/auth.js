@@ -12,14 +12,17 @@
  */
 exports.login = async function login(ctx){
 
+  if(be.empty(ctx.request.body.username))
+    return ctx.body = ctx.errors.REQUIRED_PARAMS_EMPTY
+
   const user = await ctx.db.models.User.findOne({ where: { "username": ctx.request.body.username } }).then((result) => result)
   let isLogged = false
   let token = null
   let message = ''
 
-  if (user){
+  if (be.not.empty(user)){
     isLogged = await comparePassword(user, ctx.request.body.password)
-    if(isLogged){
+    if(be.booleanTrue(isLogged)){
       token = await ctx.auth.createToken(user.id)
       const session = { user: user.id, token, exp: new Date().getTime() + (360000 * 24 * 30) }
       await ctx.auth.insert(session)
