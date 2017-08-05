@@ -7,7 +7,7 @@ const config = require('./config/config.js')
 const sessions = require('./helpers/session.js')
 const app = new koa()
 
-app.context.auth = new sessions({ secret: `${config.secret}`, serverHost: `${config.server.ip}` })
+app.context.auth = new sessions({ secret: `${config.secret}`, serverHost: `${config.server.hostname}` })
 app.context.db = require('./config/database')
 app.context.errors = require('./config/errors')
 

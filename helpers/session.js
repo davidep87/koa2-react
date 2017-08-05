@@ -15,14 +15,14 @@ class Session {
   }
 
   /**
-   * insert admin session
+   * insert admin or user session
    * @param  {int}  session.user id of the user
    * @param  {string}  session.token generated token
    * @param  {unixtime}  session.exp expiration time of token
    */
   async insert(session){
-    await client.set(`${session.user}`, `${session.token}`, redis.print)
-    await client.expireat(`${session.user}`, session.exp, function (err, didSetExpiry) {
+    await client.set(`${session.type}-${session.user}`, `${session.token}`, redis.print)
+    await client.expireat(`${session.type}-${session.user}`, session.exp, function (err, didSetExpiry) {
         console.log('set exp => ', didSetExpiry)
     })
   }
@@ -58,13 +58,13 @@ class Session {
 
       if(be.past(new Date(decoded.exp))){
 
-        await client.del(`${decoded.id}`)
+        await client.del(`${decoded.type}-${decoded.id}`)
         message = error.TOKEN_NOT_VALID
         return { isLogged, token, message }
 
       } else {
 
-       const storedToken = await this.retrieveKey(decoded.id)
+       const storedToken = await this.retrieveKey(`${decoded.type}-${decoded.id}`)
 
        if(storedToken === token)
          isLogged = true
@@ -80,14 +80,16 @@ class Session {
    * @param  {type}  id user id or anything that you like to use as identificator
    * @return {string}   token
    */
-  async createToken(id) {
+  async createToken(id, type) {
     const time = new Date()
     time.setMinutes(time.getMinutes() + 480)
     const payload = {
-      iss: this.serverIp,
+      iss: this.server,
       exp: time,
       id: id,
+      type: type
     }
+    console.log('payload', payload)
     const token = await jws.sign({ header: { alg: 'HS256' }, payload: payload, secret: this.secret })
     return token
   }

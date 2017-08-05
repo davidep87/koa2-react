@@ -15,16 +15,17 @@ exports.login = async function login(ctx){
   if(be.empty(ctx.request.body.username))
     return ctx.body = ctx.errors.REQUIRED_PARAMS_EMPTY
 
-  const user = await ctx.db.models.User.findOne({ where: { "username": ctx.request.body.username } }).then((result) => result)
+  const user = await ctx.db.models.User.findOne({ where: { "username": ctx.request.body.username } })
   let isLogged = false
   let token = null
   let message = ''
+  const type = 'admin'
 
   if (be.not.empty(user)){
     isLogged = await comparePassword(user, ctx.request.body.password)
     if(be.booleanTrue(isLogged)){
-      token = await ctx.auth.createToken(user.id)
-      const session = { user: user.id, token, exp: new Date().getTime() + (360000 * 24 * 30) }
+      token = await ctx.auth.createToken(user.id, type)
+      const session = { user: user.id, token, exp: new Date().getTime() + (360000 * 24 * 30), type }
       await ctx.auth.insert(session)
     } else {
       message = ctx.errors.LOGIN_ERROR2
@@ -33,7 +34,7 @@ exports.login = async function login(ctx){
      message = ctx.errors.LOGIN_ERROR3
   }
 
-  ctx.body = { isLogged, token, message }
+  ctx.body = { isLogged, token, message, type }
 }
 
 /**

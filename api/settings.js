@@ -39,7 +39,9 @@ exports.settings = async function settings(ctx, next){
  * @return {object} settings all info saved in general settings
  */
 exports.settings = async function getSettings(ctx, next){
-  const settings = await ctx.db.models.Settings.findOne({ where: { id: 1 },
-    attributes: { exclude: ['id', 'image', 'createdAt', 'updatedAt'] } }).then((result) => result );
+  const settings = await ctx.db.models.Settings.findOne({
+    where: { id: 1 },
+    attributes: { exclude: ['id', 'image', 'createdAt', 'updatedAt'] }
+  })
   ctx.body = settings
 }
