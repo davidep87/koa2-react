@@ -89,7 +89,6 @@ class Session {
       id: id,
       type: type
     }
-    console.log('payload', payload)
     const token = await jws.sign({ header: { alg: 'HS256' }, payload: payload, secret: this.secret })
     return token
   }
