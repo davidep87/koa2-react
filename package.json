@@ -35,7 +35,7 @@
     "pg": "^6.1.5",
     "pg-hstore": "^2.3.2",
     "redis": "^2.7.1",
-    "sequelize": "^3.30.4"
+    "sequelize": "^5.8.11"
   },
   "devDependencies": {
     "axios": "^0.16.0",
