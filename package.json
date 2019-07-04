@@ -10,7 +10,9 @@
     "webpack": "webpack --watch --progress",
     "start:hot": "webpack-dev-server",
     "build": "webpack -p",
-    "doc": "jsdoc -c ./config/jsdoc.json"
+    "doc": "jsdoc -c ./config/jsdoc.json",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "keywords": [
     "koa2",
@@ -35,7 +37,8 @@
     "pg": "^6.1.5",
     "pg-hstore": "^2.3.2",
     "redis": "^2.7.1",
-    "sequelize": "^3.30.4"
+    "sequelize": "^3.30.4",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "axios": "^0.16.0",
@@ -86,5 +89,6 @@
     "url-loader": "^0.5.8",
     "webpack": "^2.2.0",
     "webpack-dev-server": "^2.2.0-rc.0"
-  }
+  },
+  "snyk": true
 }
