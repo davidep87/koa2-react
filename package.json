@@ -28,7 +28,7 @@
     "bejs": "^1.10.0",
     "http2": "^3.3.6",
     "jws": "^3.1.4",
-    "koa": "^2.2.0",
+    "koa": "^3.0.1",
     "koa-body": "2",
     "koa-router": "next",
     "nodemailer": "^4.0.0",
